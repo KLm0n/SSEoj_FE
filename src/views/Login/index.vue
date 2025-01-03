@@ -1,167 +1,144 @@
 <!-- eslint-disable vue/multi-word-component-names -->
-
 <template>
-    <div>
-        <header>
-            <p>我是登录页</p>
-        </header>
-
-        <!-- <section class="loginBlock">
-            
-        </section> -->
-        <div class="body">
-            <div class="choice">
-                <span @click="flag = true">登陆</span>
-                <span class="vertical-divider"></span>
-                <span @click="flag = false">注册</span>
+  <div class="container">
+    <header>
+      <h2 class="logo">SSEOJ</h2>
+    </header>
+    <div class="pane">
+      <div class="wrapper" :class="{ active }">
+        <!-- Login Form -->
+        <div class="form_box login">
+          <h2>Login</h2>
+          <form @submit.prevent="doLogin">
+            <div class="input_box">
+              <span class="icon"><ion-icon name="mail"></ion-icon></span>
+              <input type="text" v-model="email" required />
+              <label>Email</label>
             </div>
-            <template v-if="flag">
-                <div class="form">
-                    <el-form :model="user_form" :rules="rules" ref="formRef">
-                        <el-form-item prop="email" label="邮箱">
-                            <el-input v-model="user_form.email" />
-                        </el-form-item>
-                        <el-form-item prop="password" label="密码">
-                            <el-input v-model="user_form.password" />
-                        </el-form-item>
-                    </el-form>
-                    <div class="buttonGroup">
-                        <el-button>注册</el-button>
-                        <el-button @click="doLogin">登陆</el-button>
-                    </div>
-                </div>
-            </template>
-            <template v-else>
-                <div class="form">
-                    <el-form :model="user_form" :rules="rules" ref="formRef">
-                        <el-form-item prop="email">
-                            <span>邮箱</span>
-                            <el-input v-model="user_form.email" />
-                        </el-form-item>
-                        <el-form-item prop="password" class="verification">
-                            <span>验证码</span>
-                            <el-input v-model="user_form.password" />
-                            <el-button>发送验证码</el-button>
-                        </el-form-item>
-                    </el-form>
-                    <el-button>注册</el-button>
-                </div>
-            </template>
+            <div class="input_box">
+              <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+              <input type="password" v-model="password" required />
+              <label>Password</label>
+            </div>
+            <div class="remember_forgot">
+              <label><input type="checkbox">Remember me</label>
+              <a href="#">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn">Login</button>
+            <div class="login_register">
+              <p>Don't have an account? <label class="register_link" @click="showRegister">Register</label></p>
+            </div>
+          </form>
         </div>
 
+        <!-- Registration Form -->
+        <div class="form_box register">
+          <h2>Registration</h2>
+          <form @submit.prevent="doRegister">
+            <div class="input_box">
+              <span class="icon"><ion-icon name="person"></ion-icon></span>
+              <input type="text" v-model="username" required>
+              <label>Username</label>
+            </div>
+            <div class="input_box">
+              <span class="icon"><ion-icon name="mail"></ion-icon></span>
+              <input type="text" v-model="registerEmail" required>
+              <label>Email</label>
+            </div>
+            <div class="input_box_verfication">
+              <span class="icon"><ion-icon name="pencil"></ion-icon></span>
+              <input type="text" v-model="verificationCode" required>
+              <label>Verification Code</label>
+            </div>
+            <div>
+              <button type="submit" class="btn_verification">Send</button>
+            </div>
+            <div class="input_box">
+              <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+              <input type="password" v-model="registerPassword" required>
+              <label>Password</label>
+            </div>
+            <div class="input_box">
+              <span class="icon"><ion-icon name="alert-circle"></ion-icon></span>
+              <input type="password" v-model="repassword" required>
+              <label>Repassword</label>
+            </div>
+            <button type="sumit" class="btn">Register</button>
+            <div class="login_register">
+              <p>Already have an account? <label class="login_link" @click="showLogin">Login</label></p>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { ref } from 'vue';
 import { useUserStore } from '@/stores/userStore';
 import 'element-plus/theme-chalk/el-message.css';
 import router from '@/router';
+import forge from 'node-forge';
 
-const flag = ref(true)
+// Data properties
+const email = ref('');
+const password = ref('');
+const username = ref('');
+const registerEmail = ref('');
+const registerPassword = ref('');
+const verificationCode = ref('');
+const repassword = ref('');
+const active = ref(false);
 
-const formRef = ref(null)
 const userStore = useUserStore()
 
-const user_form = ref({
-    email: '',
-    password: '',
-})
 
-const rules = {
-    email: [
-        { required: true, message: "邮箱不能为空", trigger: 'blur' }
-    ],
-    password: [
-        { required: true, message: "密码不能为空", trigger: 'blur' }
-    ]
+// Methods
+const doLogin = async () => {
+  const publicKeyPem = `-----BEGIN PUBLIC KEY-----
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKHP3hnFtL1g3bpgDMFAma1MofY9UmInthR8vK5Q9/dYcfdqvzLFRdRCPdeefqGO+BIFfLeCKJi4odn61XJEvp8CAwEAAQ==
+-----END PUBLIC KEY-----`
+  // const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
+  // const encrypted = forge.util.encode64(publicKey.encrypt(password.value));
+  // console.log(encrypted)
+  await userStore.getUserInfo(email.value, password.value)
+  ElMessage({ type: "success", message: "登陆成功" })
+  const redirectPath = localStorage.getItem('redirectPath') || '/'
+  router.replace(redirectPath)
+  localStorage.removeItem('redirectPath')
 }
 
+const doRegister = () => {
+  alert('Registration logic needs to be implemented.');
+};
 
-// 登陆函数
-const doLogin = () => {
-    const { email, password } = user_form.value
-    formRef.value.validate(async (valid) => {
-        if (valid) {
-            await userStore.getUserInfo(email, password)
-            ElMessage({ type: "success", message: "登陆成功" })
-            router.replace({ path: '/' })
-        }
-    })
-}
+const showRegister = (event) => {
+  event.preventDefault();
+  active.value = true; // Set active to true when switching to register form
+};
 
+const showLogin = (event) => {
+  event.preventDefault();
+  active.value = false; // Set active to false when switching back to login form
+};
+
+// Mounted lifecycle hook for dynamically loading external scripts
+onMounted(() => {
+  const scriptModule = document.createElement('script');
+  scriptModule.type = 'module';
+  scriptModule.src = 'https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js';
+  document.head.appendChild(scriptModule);
+
+  const scriptNoModule = document.createElement('script');
+  scriptNoModule.nomodule = true;
+  scriptNoModule.src = 'https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js';
+  document.head.appendChild(scriptNoModule);
+});
 </script>
 
 <style scoped>
-.body {
-    display: flex;
-    flex-direction: column;
-    width: 400px;
-    margin: 0 auto;
-    margin-top: 200px;
-    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
-    border-radius: 10px;
-    padding-top: 20px;
-}
-
-.el-form-item{
-    position: relative;
-    display: flex;
-}
-
-.choice {
-    display: flex;
-    gap: 20px;
-    margin: auto;
-    font-size: 20px;
-    align-items: center;
-    margin-bottom: 50px;
-}
-
-.vertical-divider {
-    height: 100%;
-    margin: 0 50px;
-    width: 1px;
-    height: 30px;
-    background-color: #ccc;
-}
-
-.form {
-    margin: 0px 40px 0px 40px;
-    display: flex;
-    flex-direction: column;
-}
-
-.form span{
-    width: 40px;
-}
-
-.el-form-item {
-    display: flex;
-    align-items: center;
-
-}
-
-.el-form-item span {
-    margin-right: 10px;
-    white-space: nowrap;
-}
-
-.verification {
-    display: flex;
-    align-items: center;
-
-    /* 垂直居中 */
-}
-
-.el-input {
-    flex: 1;
-    margin: 0px 10px 0px 10px;
-}
-
-.verification .el-button {
-    white-space: nowrap;
-    /* 防止按钮文本换行 */
-}
+/* Add your CSS styles here */
+@import url('login.css');
 </style>

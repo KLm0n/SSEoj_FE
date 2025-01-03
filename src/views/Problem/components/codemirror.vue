@@ -8,9 +8,8 @@
 import { onMounted, ref } from 'vue';
 import { Compartment, EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
-import { defaultKeymap } from '@codemirror/commands';
-
-import { basicSetup } from 'codemirror';
+import { indentWithTab } from '@codemirror/commands';
+import { basicSetup} from 'codemirror';
 import { java } from '@codemirror/lang-java';
 import { cpp } from '@codemirror/lang-cpp';
 import { python } from '@codemirror/lang-python';
@@ -23,7 +22,6 @@ const languageCpt = new Compartment()
 
 const customCompletionSource = async (context) => {
   const word = context.matchBefore(/([a-zA-Z]\w*)/);
-  console.log("1:", word)
   if (!word || word.length < 1) {
     return null;
   }
@@ -59,22 +57,45 @@ function getVariablesFromContext(state) {
   return variables;
 }
 
+let baseTheme = EditorView.baseTheme({
+  "&.cm-focused.cm-focused": {
+    outline: "none"
+  },
+  "&.cm-content": {
+    whiteSpace: "pre-wrap !important", 
+    wordBreak: "break-word !important"
+  }
+})
+
 onMounted(() => {
 
   // 在组件挂载后初始化 CodeMirror 编辑器
   const startState = EditorState.create({
     doc: "",
-    extensions: [vscodeLight,
-      keymap.of(defaultKeymap),
-      basicSetup,
-      languageCpt.of(cpp()),
-      autocompletion({override:[customCompletionSource]})]  // 启用默认的键盘快捷键
+    extensions:
+      [
+        baseTheme,
+        vscodeLight,
+        EditorState.tabSize.of(16),
+        EditorView.lineWrapping,
+        keymap.of([
+          indentWithTab
+        ]),
+        basicSetup,
+        languageCpt.of(cpp()),
+        autocompletion({ override: [customCompletionSource] })
+      ]
   });
-
   editorView = new EditorView({
     state: startState,
     parent: editorContainer.value  // 将编辑器挂载到 DOM 容器上
   });
+
+  // editorView.dom.addEventListener('keydown', (e) => {
+  //   if (e.key === 'Tab') {
+  //     e.preventDefault()
+  //   }
+  // })
 });
 const langs = {
   'C': cpp(),
@@ -103,14 +124,13 @@ const uploadCode = (code) => {
   editorView.dispatch(transaction);
 }
 
+const getCode = () => {
+  return editorView.state.doc.toString()
+}
+
 defineExpose({
   toggleLanguage,
-  uploadCode
+  uploadCode,
+  getCode
 })
 </script>
-
-<style scoped>
-.editor:active {
-  text-decoration: none;
-}
-</style>

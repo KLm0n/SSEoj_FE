@@ -10,4 +10,7 @@ import layoutNav from '@/views/Layout/components/layoutNav.vue'
 </template>
 
 <style scoped>
+layoutNav {
+    clear: both;
+}
 </style>

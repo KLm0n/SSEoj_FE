@@ -1,4 +1,4 @@
-// import './assets/main.css'
+import './assets/base.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -8,6 +8,13 @@ import App from './App.vue'
 import router from './router'
 import './mock/login'
 import './mock/problemset'
+import './mock/problem'
+import './mock/tags'
+import './mock/postList'
+import './mock/post'
+import './mock/comment'
+import './mock/problemlist'
+import './mock/user'
 
 const app = createApp(App)
 const pinia = createPinia()

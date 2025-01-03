@@ -1,5 +1,6 @@
 import Mock from 'mockjs'
 
+// 获取题库
 Mock.mock(/\/api\/problemset\//, 'get', (options) => {
     console.log(options.url)
     const query = options.url.split('?')[1];
@@ -11,21 +12,60 @@ Mock.mock(/\/api\/problemset\//, 'get', (options) => {
         return {
             err: null,
             data: {
-                total: 100,
+                count: 100,
                 problems: [
                     {
                         "status": true,
-                        "problem_id": 1001,
-                        "problem_name": "你好，世界",
+                        "id": 1001,
+                        "name": "你好，世界",
                         "tags": [
-                            "hash-table",
-                            "math",
-                            "dp"
+                            1,
+                            2,
+                            3
                         ],
-                        "pass_rate": 66.6,
+                        "pass_count": 550,
+                        "attempt_count": 1000,
                         "difficulty": 5
                     },
-
+                    {
+                        "status": false,
+                        "id": 1001,
+                        "name": "你好，世界",
+                        "tags": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "pass_count": 550,
+                        "attempt_count": 1000,
+                        "difficulty": 5
+                    },
+                    {
+                        "status": true,
+                        "id": 1001,
+                        "name": "你好，世界",
+                        "tags": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "pass_count": 550,
+                        "attempt_count": 1000,
+                        "difficulty": 5
+                    },
+                    {
+                        "status": false,
+                        "id": 1001,
+                        "name": "你好，世界",
+                        "tags": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "pass_count": 550,
+                        "attempt_count": 1000,
+                        "difficulty": 5
+                    }
                 ]
             }
         }
@@ -34,16 +74,17 @@ Mock.mock(/\/api\/problemset\//, 'get', (options) => {
         return {
             err: null,
             data: {
-                total: 100,
+                count: 100,
                 problems: [{
                     "status": true,
-                    "problem_id": 1002,
-                    "problem_name": "A+B",
+                    "id": 1002,
+                    "name": "A+B",
                     "tags": [
-                        "递归",
-                        "链表"
+                        3,
+                        4
                     ],
-                    "pass_rate": 88.8,
+                    "pass_count": 666,
+                    "attempt_count": 1000,
                     "difficulty": 3
                 },
                 ]
@@ -53,6 +94,40 @@ Mock.mock(/\/api\/problemset\//, 'get', (options) => {
 }
 )
 
+// 提交题解
+Mock.mock(/\/api\/solution\/create\//, 'post', (options) => {
+    console.log(options)
+    return {
+        err: null,
+        data: 'success'
+    }
+})
+
+Mock.mock(/\/api\/problem\/(\d+)\/solutions\/(\d+)\//, 'get', (options) => {
+    console.log(options.url)
+    const data = {
+        "solution": {
+            "solution_id": "99",
+            "solution_title": "平方数之和",
+            "solution_content": "嗷嗷嗷嗷嗷嗷嗷"
+        },
+        "user_info": {
+            "user_id": "666",
+            "user_name": "KLmon",
+            "avatar": "https://sseoj.com/u/avatar_96310528"
+        },
+        "like_count": 80,
+        "comment_count": "180",
+        "create_time": "2025-05-15 02:29:51",
+        "tags": [
+            "force"
+        ]
+    }
+    return {
+        err: null,
+        data: data
+    }
+})
 
 // 假设你的 API 路径是这样的，并且带有查询参数
 // const apiPath = '/api/problemset';

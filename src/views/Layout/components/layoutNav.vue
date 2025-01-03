@@ -12,7 +12,7 @@
             <div class="userInfo">
                 <el-popover :show-arrow="false">
                     <template #reference>
-                        <el-avatar :src="userStore.getAvatar()" :size="60" fit="fill" />
+                        <el-avatar :src="userStore.getAvatar()" :size="60" fit="fill" @click="goToUser(userStore.userInfo.id)">User</el-avatar>
                     </template>
                     <template #default>
                         <div class="avatarDropdown">
@@ -23,12 +23,12 @@
                         </div>
                     </template>
                 </el-popover>
-                <span>{{ userStore.userInfo.user_name }}</span>
+                <span>{{ userStore.userInfo.username }}</span>
             </div>
         </template>
         <template v-else>
             <ul class="notAuth">
-                <a href="/login">登录</a>
+                <a @click="router.push('/login')">登录</a>
                 <a href="#">帮助</a>
             </ul>
         </template>
@@ -37,11 +37,20 @@
 
 <script setup>
 import { useUserStore } from '@/stores/userStore';
-import { ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
+
+const router = useRouter()
 const userStore = useUserStore()
 const logout = () => {
     userStore.clearUserInfo()
+    ElMessage({ type: "success", message: "退出成功" })
 }
+
+const goToUser = (userId) => {
+  router.replace(`/user/${userId}`);
+};
 
 </script>
 
@@ -50,31 +59,39 @@ const logout = () => {
     width: 85%;
     font-size: 30px;
     margin: 5px auto 5px auto;
+    height: 36px;
+    position: relative;
 }
 .header {
     display: flex;
     justify-content: space-between;
     margin-top: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     margin-left: auto;
     margin-right: auto;
     background-color: #282727;
     border-radius: 10px;
     width: 85%;
     min-width: 800px;
+    height: 60px;
+    position: relative;
+    clear: both;
 }
+
 
 .el-menu {
     margin-left: 50px;
     --el-menu-base-level-padding: 25px;
     --el-menu-border-color: none;
     gap: 15px;
-    
+    position: relative;
+    clear: both;
 }
 
 .el-menu-item {
     font-size: 17px;
     --el-menu-hover-bg-color: black;
+    position: relative;
 }
 
 .el-menu-item.is-active {
