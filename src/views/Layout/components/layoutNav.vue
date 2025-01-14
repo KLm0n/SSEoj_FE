@@ -46,6 +46,7 @@ const userStore = useUserStore()
 const logout = () => {
     userStore.clearUserInfo()
     ElMessage({ type: "success", message: "退出成功" })
+    router.replace(`/`);
 }
 
 const goToUser = (userId) => {
