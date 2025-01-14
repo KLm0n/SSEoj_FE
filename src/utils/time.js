@@ -1,4 +1,5 @@
 export const getFullDate = (dateStr) => {
+   console.log(dateStr)
     const date = new Date(dateStr)
     const y = date.getFullYear()
     const M = date.getMonth() + 1
@@ -12,7 +13,7 @@ export const getDate = (dateStr) => {
     const date = new Date(dateStr)
     const y = date.getFullYear()
     const M = date.getMonth() + 1
-    const d = date.getDay()
+    const d = date.getDate()
     return `${y}-${M}-${d}`
 }
 
@@ -23,21 +24,20 @@ export const getTime = (dateStr) => {
     return `${h}:${m}`
 }
 
-export const transformTime = (dateStr) => {
+export const transformDate = (dateStr) => {
     const date = new Date(dateStr)
     const today = new Date()
     const delta = Math.abs(today - date)
-    console.log(delta)
     if (delta <= 60 * 1000)
         return '刚刚'
-    else if (delta <= 60 * 60 * 1000)
+    else if (delta < 60 * 60 * 1000)
         return `${Math.ceil(delta / (60 * 1000))}分钟前`
-    else if (delta <= 24 * 60 * 60 * 1000)
+    else if (delta < 24 * 60 * 60 * 1000)
         return `${Math.ceil(delta / (60 * 60 * 1000))}小时前`
     else
         return getDate(dateStr)
 }
 
 // transformTime('2024-12-30 09:17:11.098980+00:00')
-const res = transformTime('2024-12-30 22:57:11.098980+00:00')
-console.log(res)
+// const res = transformTime('2025-1-3 10:57:15.098980+00:00')
+// console.log(res)

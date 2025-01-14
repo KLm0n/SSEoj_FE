@@ -12,6 +12,30 @@ export const loginAPI = ({ email, password }) => {
     })
 }
 
+export const registerAPI = ({ email, password,username,verification_code }) => {
+  return request({
+      url: '/api/identity/register/',
+      method: 'POST',
+      data: {
+          email:email,
+          password:password,
+          username: username,
+          verification_code: verification_code,
+      }
+  })
+}
+
+export const getIdentityAPI = ({ email, type }) => {
+  return request({
+      url: '/api/identity/send_email/',
+      method: 'POST',
+      data:{
+        email: email,
+        type: type,
+      }
+  })
+}
+
 // 获取用户信息
 export const getUserInfoAPI = (id) => {
     return request({
@@ -32,6 +56,13 @@ export const getCreateProblemListAPI = (id) => {
     return request({
         url: `/api/user/${id}/create_problemlist/`
     })
+}
+
+// 获取默认题单
+export const getDefaultProblemListAPI = (id) => {
+  return request({
+    url: `/api/user/${id}/default_problemlist/`,
+  })
 }
 
 // 关注用户
@@ -106,3 +137,11 @@ export const getPracticeAPI= (id) =>{
       method: 'GET',
     })
 }
+
+export const getStudyPlanAPI= (id) =>{
+  return request({
+    url: `/api/user/${id}/study_plan/`,
+    method: 'GET',
+  })
+}
+

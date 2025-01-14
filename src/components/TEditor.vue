@@ -65,15 +65,17 @@ const props = defineProps({
     },
     plugins: {
         type: [String, Array],
-        default:
-            "importcss autoresize searchreplace autolink directionality code visualblocks visualchars fullscreen image link codesample table charmap nonbreaking anchor insertdatetime advlist lists wordcount charmap quickbars emoticons accordion",
+        // default:
+            // "importcss autoresize searchreplace autolink directionality code visualblocks visualchars fullscreen image link codesample table charmap nonbreaking anchor insertdatetime advlist lists wordcount charmap quickbars emoticons accordion",
+            default: "emoticons"
     },
     knwlgId: {
         type: String,
     },
     toolbar: {
         type: [String, Array, Boolean],
-        default: "undo redo | accordion accordionremove | blocks fontfamily fontsize| bold italic underline strikethrough ltr rtl  | align numlist bullist | link image | table | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | anchor codesample",
+        // default: "undo redo | accordion accordionremove | blocks fontfamily fontsize| bold italic underline strikethrough ltr rtl  | align numlist bullist | link image | table | lineheight outdent indent| forecolor backcolor removeformat | charmap emoticons | anchor codesample",
+        default: "emoticons"
     },
     readonly: {
         type: Boolean,
@@ -102,7 +104,8 @@ const init = reactive({
     promotion: false, //去掉 upgrade
     toolbar_sticky: true,
     // toolbar_sticky_offset: 100,
-    menubar: "edit view insert format tools table",
+    // menubar: "edit view insert format tools table",
+    menubar: false,
     paste_data_images: true, //允许粘贴图像
     image_dimensions: false, //去除宽高属性
     plugins: props.plugins, //这里的数据是在props里面就定义好了的

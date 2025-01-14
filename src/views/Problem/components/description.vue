@@ -21,22 +21,22 @@
 
         <div>
             <div class="node">题目描述</div>
-            <div>{{ problemDesc.description }}</div>
+            <div v-html="problemDesc.description"></div>
         </div>
         <el-divider />
         <div>
             <div class="node">输入格式</div>
-            <div>{{ problemDesc.input_style }}</div>
+            <div v-html="problemDesc.input_style"></div>
         </div>
         <el-divider />
         <div>
             <div class="node">输出格式</div>
-            <div>{{ problemDesc.output_style }}</div>
+            <div v-html="problemDesc.output_style"></div>
         </div>
         <el-divider />
         <div>
             <div class="node">数据范围</div>
-            <div>{{ problemDesc.data_range }}</div>
+            <div v-html="problemDesc.data_range"></div>
         </div>
         <el-divider />
         <div>

@@ -1,137 +1,112 @@
 import Mock from 'mockjs'
 
-Mock.mock(/\api\/post\/(\d+)\/comments/, 'get', (options) => {
-    const query = options.url.split('?')[1];
-    const id = new URLSearchParams(query);
+// 模拟获取一级评论
+Mock.mock(/\/api\/post\/(\d+)\/comments\/(?=\?)/, 'get', (options) => {
+    // console.log(options.url)
+    const data = {
+      "count": 100,
+      "comments": [
+          {
+              "id": 34,
+              "user_info": {
+                  "id": 81,
+                  "username": "秦敬阳",
+                  "avatar": "https://avatars.githubusercontent.com/u/86763916"
+              },
+              "is_good": false,
+              "content": "Duis tempor sint",
+              "like_count": 94,
+              "create_time": "2024-04-05 14:43:28",
+              "comments_count": 0
+          },
+          {
+              "id": 35,
+              "user_info": {
+                  "id": 34,
+                  "username": "仆明",
+                  "avatar": "https://avatars.githubusercontent.com/u/74314786"
+              },
+              "is_good": false,
+              "content": "dolor",
+              "like_count": 20,
+              "create_time": "2025-10-24 20:04:30",
+              "comments_count": 52
+          },
+          {
+              "id": 18,
+              "user_info": {
+                  "id": 68,
+                  "username": "首伟",
+                  "avatar": "https://avatars.githubusercontent.com/u/67513096"
+              },
+              "is_good": true,
+              "content": "Excepteur irure Lorem sed eu",
+              "like_count": 1,
+              "create_time": "2025-10-14 06:32:20",
+              "comments_count": 84
+          }
+      ]
+  }
+  return {
+      err: null,
+      data: data
+  }
+})
 
-    const body = JSON.parse(options.body); // 将 JSON 字符串解析为对象
-    const { page, page_size } = body; // 从 body 中提取参数
-
-    console.log({ page, page_size }); // 调试信息，确认接收到的参数
-    if (page == 1) {
-        return {
-            err: null,
-            data: {
-                count: 100,
-                comments: [
-                  {
-                    "comment_id": "37",
-                    "user_id": 14,
-                    "user_name": "钭沐辰",
-                    "avatar": "https://avatars.githubusercontent.com/u/42298206",
-                    "is_good": true,
-                    "comment_content": "officia aliqua laboris occaecat adipisicing",
-                    "like_count": 13,
-                    "create_time": "2025-07-28",
-                    "reply_to_id": "",
-                    "reply_to_name": "",
-                    "under_comment_id":""
-                },
-                {
-                    "comment_id": "23",
-                    "user_id": 21,
-                    "user_name": "艾治文",
-                    "avatar": "https://avatars.githubusercontent.com/u/22323861",
-                    "is_good": false,
-                    "comment_content": "pariatur occaecat laboris ex",
-                    "like_count": 96,
-                    "create_time": "2024-12-18",
-                    "reply_to_id": "37",
-                    "reply_to_name": "钭沐辰",
-                    "under_comment_id":"37"
-                },
-                {
-                    "comment_id": "24",
-                    "user_id": 34,
-                    "user_name": "能艺涵",
-                    "avatar": "https://avatars.githubusercontent.com/u/54125787",
-                    "is_good": true,
-                    "comment_content": "non irure commodo",
-                    "like_count": 87,
-                    "create_time": "2024-07-14",
-                    "reply_to_id": "23",
-                    "reply_to_name": "艾治文",
-                    "under_comment_id":"37"
-                }
-              ]
-            }
-        }
+// 模拟点赞题解评论
+Mock.mock(/\/api\/post\/comment\/good\//, 'post', () => {
+    return {
+        err: null,
+        data: 'success'
     }
-    else if (page == 2) {
-        return {
-            err: null,
-            data: {
-                count: 100,
-                comments: [
-                  {
-                    "comment_id": "37",
-                    "user_id": 14,
-                    "user_name": "钭沐辰",
-                    "avatar": "https://avatars.githubusercontent.com/u/42298206",
-                    "is_good": false,
-                    "comment_content": "officia aliqua laboris occaecat adipisicing",
-                    "like_count": 13,
-                    "create_time": "2025-07-28",
-                    "reply_to_id": "",
-                    "reply_to_name": "",
-                    "under_comment_id":""
-                },
-                {
-                  "comment_id": "22",
-                  "user_id": 10,
-                  "user_name": "makima",
-                  "avatar": "https://avatars.githubusercontent.com/u/42298206",
-                  "is_good": false,
-                  "comment_content": "officia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicingofficia aliqua laboris occaecat adipisicing",
-                  "like_count": 13,
-                  "create_time": "2025-07-27",
-                  "reply_to_id": "14",
-                  "reply_to_name": "钭沐辰",
-                  "under_comment_id":"37"
-                },
-                {
-                  "comment_id": "2",
-                  "user_id": 10,
-                  "user_name": "sbsbsbsb",
-                  "avatar": "https://avatars.githubusercontent.com/u/42298206",
-                  "is_good": true,
-                  "comment_content": "officia aliqua laboris occaecat adipisicing",
-                  "like_count": 13,
-                  "create_time": "2025-07-28",
-                  "reply_to_id": "22",
-                  "reply_to_name": "makima",
-                  "under_comment_id":"37"
-                },
-                {
-                  "comment_id": "111",
-                  "user_id": 111,
-                  "user_name": "IVE",
-                  "avatar": "https://avatars.githubusercontent.com/u/42298206",
-                  "like_status": false,
-                  "comment_content": "officia aliqua laboris occaecat adipisicing",
-                  "like_count": 13,
-                  "create_time": "2025-07-12",
-                  "reply_to_id": "",
-                  "reply_to_name": "",
-                  "under_comment_id":""
-                },
-                {
-                  "comment_id": "111",
-                  "user_id": 111,
-                  "user_name": "IVE_LOVE",
-                  "avatar": "https://avatars.githubusercontent.com/u/42298206",
-                  "like_status": true,
-                  "comment_content": "officia aliqua laboris occaecat adipisicing",
-                  "like_count": 13,
-                  "create_time": "2025-07-02",
-                  "reply_to_id": "111",
-                  "reply_to_name": "IVE",
-                  "under_comment_id":"111"
-                },
-              ]
-            }
-        }
-    }
+})
 
-}
-)
+// 模拟二级评论
+Mock.mock(/\/api\/post\/(\d+)\/comments\/(\d+)\//, 'get', ()=> {
+  // console.log(options.url)
+  const data = {
+      "count": 20,
+      "comments": [
+          {
+              "id": 26,
+              "user_info": {
+                  "id": 44,
+                  "username": "耿勇",
+                  "avatar": "https://avatars.githubusercontent.com/u/91847636"
+              },
+              "is_good": false,
+              "content": "nostrud occaecat consectetur",
+              "create_time": "2024-08-12 09:39:48",
+              "like_count": 100,
+              "reply_to_id": 81,
+              "reply_to_name": "哀诚"
+          },
+          {
+              "id": 97,
+              "user_info": {
+                  "id": 42,
+                  "username": "幸欣怡",
+                  "avatar": "https://avatars.githubusercontent.com/u/63754484"
+              },
+              "is_good": false,
+              "content": "proident aliqua minim eiusmod non",
+              "create_time": "2025-04-10 01:42:05",
+              "like_count": 66,
+              "reply_to_id": 97,
+              "reply_to_name": "厍榕融"
+          }
+      ]
+  }
+  return {
+      err: null,
+      data: data
+  }
+})
+
+// 模拟发布评论
+Mock.mock(/\/api\/post\/comment\/new\//, 'post', ()=>{
+    return {
+        err: null,
+        data: 'success'
+    }
+})

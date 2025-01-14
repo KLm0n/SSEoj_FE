@@ -18,12 +18,16 @@
                 >
                     <template #reference>
                         <div class="diff-Filter">
-                            <div class="diff-Circle"></div>
+                            <div class="diff-Circle" :style="diffCircle"></div>
                             <span class="filter-text">难度</span>
                         </div>
                     </template>
                     <template #default>
-                        
+                        <diffView 
+                            :numList="numList"
+                            :selected-diff="min_diff"
+                            @select-diff="selectDiff"
+                        />
                     </template>
                 </el-popover>
                 
@@ -47,7 +51,7 @@
                         />
                     </template>
                 </el-popover>
-                
+                <el-button class="postProblemBtn" @click="router.push('/problem/create')">发布题目</el-button>
             </div>
 
             <div class="problemset">
@@ -95,12 +99,13 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue';
-import { getProblemSetAPI } from "@/apis/problemset";
+import { getProblemSetAPI, getProblemNumAPI } from "@/apis/problemset";
 import { useTagsStore } from '@/stores/tagsStore';
 import { getDifficultColor } from '@/utils/color'
 import { useRoute } from 'vue-router';
 import { useRouter } from 'vue-router';
 import tagView from './components/tagView.vue';
+import diffView from './components/diffView.vue';
 
 const router = useRouter()
 const tagsStore = useTagsStore()
@@ -129,10 +134,9 @@ const params = computed(() => ({
     tags: selectedTag.value || undefined
 }))
 
-// filter 部分代码
+// search 部分代码
 const searchBoxRef = ref(null)
 const isSearchActive = ref({})
-
 const toggleSearchBox = () => {
 
     isSearchActive.value = {
@@ -160,19 +164,20 @@ const handleOutSideClick = (e) => {
         const inputRef = searchBoxRef.value.children[2]
         inputRef.style.width = '60px'
         inputRef.style.display = 'none'
+        keyword.value = undefined
     }
 }
-
 document.addEventListener('click', handleOutSideClick)
 
+// 更新筛选参数
 const handleCurrentChange = async () => {
     await getProblemSet(params.value)
 }
-
+// 选择题目
 const rowSelected = (row) => {
     router.push(`/problem/${row.id}/description`)
 }
-
+// 添加删除tag
 const addTag = async(id) => {
     selectedTag.value.push(id)
     await getProblemSet(params.value)
@@ -182,9 +187,39 @@ const deleteTag = async(id) => {
     await getProblemSet(params.value)
 }
 
+const numList = ref([])
+const diffCircle = ref({
+    'background-color': 'white'
+})
+const getProblemNum = async() => {
+    const res = await getProblemNumAPI()
+    numList.value = res.data
+    console.log(numList)
+}
+// 选择难度
+const selectDiff = async (diff) => {
+    if (diff == min_diff.value) {
+        min_diff.value = undefined
+        max_diff.value = undefined
+        diffCircle.value = {
+            'background-color': `white`
+        }
+    }
+    else {
+        min_diff.value = diff
+        max_diff.value = diff
+        diffCircle.value = {
+            'background-color': `${getDifficultColor(diff)}`
+        }
+    }
+    console.log(params.value)
+    await getProblemSet(params.value)
+}
+
 onMounted(async () => {
     await getProblemSet(params.value)
     await tagsStore.getTags()
+    await getProblemNum()
 })
 
 
@@ -212,7 +247,7 @@ onMounted(async () => {
 .filter {
     box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
     min-width: 150px;
-    height: 200px;
+    height: 190px;
     margin-right: 20px;
     border-radius: 10px;
     display: flex;
@@ -220,6 +255,7 @@ onMounted(async () => {
     z-index: 10;
     flex-shrink: 1;
     position: relative;
+    align-items: center;
 }
 
 .search-box,
@@ -295,6 +331,16 @@ onMounted(async () => {
     padding: 2px 5px;
     font-size: 14px;
     color: black;
+}
+
+.postProblemBtn {
+    top: 210px;
+    height: 40px;
+    width: 150px;
+    border-radius: 8px;
+    color: rgb(2, 143, 167);
+    position: absolute;
+    box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.2);
 }
 
 .problemset {

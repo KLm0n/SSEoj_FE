@@ -7,8 +7,9 @@ Mock.mock(/\/api\/post\/list(\?.*)?/, 'get', (options) => {
     const params = new URLSearchParams(query);
     const page = params.get('page_num');
     const page_size = params.get('page_size');
+    const keyword = params.get('keyword');
 
-    if (page == 1) {
+    if (page == 1 && keyword==='') {
         return {
             err: null,
             data: {
@@ -19,7 +20,7 @@ Mock.mock(/\/api\/post\/list(\?.*)?/, 'get', (options) => {
                       "post_title": "当小划拨全部",
                       "user_id": 66,
                       "username": "焦敬彪",
-                      "avatar": "https://avatars.githubusercontent.com/u/17516427",
+                      "avatar": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/0u1lToAAAAASUVORK5CYII=",
                       "like_count": 9,
                       "comment_count": 10,
                       "is_good": false,
@@ -91,36 +92,17 @@ Mock.mock(/\/api\/post\/list(\?.*)?/, 'get', (options) => {
                       "is_good": false,
                       "create_time":"2024/1/17"
                   },
-                  // {
-                  //   "post_id": 8,
-                  //     "post_title": "aiaiai",
-                  //     "user_id": 1,
-                  //     "username": "KLmon",
-                  //     "avatar": "https://avatars.githubusercontent.com/u/17516427",
-                  //     "like_count": 1,
-                  //     "comment_count": 10,
-                  //     "is_good": false
-                  // },
-                  // {
-                  //   "post_id": 9,
-                  //     "post_title": "aiaiai",
-                  //     "user_id": 1,
-                  //     "username": "KLmon",
-                  //     "avatar": "https://avatars.githubusercontent.com/u/17516427",
-                  //     "like_count": 1,
-                  //     "comment_count": 10,
-                  //     "is_good": false
-                  // },
-                  // {
-                  //   "post_id": 10,
-                  //     "post_title": "aiaiai",
-                  //     "user_id": 1,
-                  //     "username": "KLmon",
-                  //     "avatar": "https://avatars.githubusercontent.com/u/17516427",
-                  //     "like_count": 1,
-                  //     "comment_count": 10,
-                  //     "is_good": false
-                  // },
+                  {
+                    "post_id": 8,
+                      "post_title": "aiaiai",
+                      "user_id": 1,
+                      "username": "KLmon",
+                      "avatar": "https://avatars.githubusercontent.com/u/17516427",
+                      "like_count": 1,
+                      "comment_count": 10,
+                      "is_good": false
+                  },
+
                   // {
                   //   "post_id": 8,
                   //     "post_title": "aiaiai",
@@ -135,7 +117,7 @@ Mock.mock(/\/api\/post\/list(\?.*)?/, 'get', (options) => {
             }
         }
     }
-    else if (page == 2) {
+    else if (page == 2 && keyword == '') {
         return {
             err: null,
             data: {
@@ -151,10 +133,62 @@ Mock.mock(/\/api\/post\/list(\?.*)?/, 'get', (options) => {
                       "comment_count": 32,
                       "is_good": true,
                       "create_time":"2024/5/17"
-                  }
+                  },
+                  {
+                    "post_id": 9,
+                      "post_title": "aiaiai",
+                      "user_id": 1,
+                      "username": "KLmon",
+                      "avatar": "https://avatars.githubusercontent.com/u/17516427",
+                      "like_count": 1,
+                      "comment_count": 10,
+                      "is_good": false
+                  },
+                  {
+                    "post_id": 10,
+                      "post_title": "aiaiai",
+                      "user_id": 1,
+                      "username": "KLmon",
+                      "avatar": "https://avatars.githubusercontent.com/u/17516427",
+                      "like_count": 1,
+                      "comment_count": 10,
+                      "is_good": false
+                  },
               ]
             }
         }
     }
+
+    else if (page == 2&& keyword == "1") {
+      return {
+          err: null,
+          data: {
+              count: 100,
+              post_list: [
+                {
+                    "post_id": 2,
+                    "post_title": "差点儿影响力也不敢情箱子捧",
+                    "user_id": 88,
+                    "username": "泥沐宸",
+                    "avatar": "https://avatars.githubusercontent.com/u/83853740",
+                    "like_count": 59,
+                    "comment_count": 32,
+                    "is_good": true,
+                    "create_time":"2024/5/17"
+                }
+            ]
+          }
+      }
+  }
+
+  else {
+    return{
+      err:null,
+      data:{
+        count:0,
+        post_list:[]
+      }
+    }
+  }
 }
 )

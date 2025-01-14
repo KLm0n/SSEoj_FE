@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getCommentAPI,likeCommentAPI } from "@/apis/comment";
+import { getPrimaryCommentAPI,likeCommentAPI } from "@/apis/comment";
 import { ref } from "vue";
 
 export const useCommentStore = defineStore('comment', () => {
@@ -7,7 +7,7 @@ export const useCommentStore = defineStore('comment', () => {
   const count = ref(0)
 
   const getComments = async (params) => {
-    const res = await getCommentAPI(params);
+    const res = await getPrimaryCommentAPI(params);
     count.value = res.data.count; // 更新 .value
     comments.value = res.data.comments.map(comment => {
       return {

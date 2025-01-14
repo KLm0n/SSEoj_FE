@@ -1,6 +1,6 @@
 <template>
     <div class="info-card">
-        <el-avatar :size="60" :src="userInfo.avatar">KL</el-avatar>
+        <el-avatar :size="60" :src="getAvatar(userInfo.avatar)">KL</el-avatar>
         <div class="basic-info">
             <span class="username">{{ userInfo.username }}</span>
             <span class="profile">{{ userInfo.profile }}</span>
@@ -22,6 +22,7 @@
 
 <script setup>
 import { transNum } from '@/utils/data_calculate';
+import { getAvatar } from '@/utils/basic';
 
 const props = defineProps({
     userInfo: {

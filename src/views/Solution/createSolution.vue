@@ -30,7 +30,7 @@ import FEditor from '@/components/FEditor.vue';
 import layoutNav from '../Layout/components/layoutNav.vue';
 import { onMounted, ref, nextTick } from 'vue';
 import { useTagsStore } from '@/stores/tagsStore';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { getProblemDescAPI } from '@/apis/problem';
 import { ElMessage } from 'element-plus';
 import { createSolutionAPI } from '@/apis/problemset';
@@ -47,10 +47,11 @@ const FEditorRef = ref(null)
 const inputVisible = ref(false)
 const autoCompleteRef = ref(null)
 const route = useRoute()
+const router = useRouter()
 const id = route.query.id
 const problemDesc = ref({})
 
-const postSolution = () => {
+const postSolution = async() => {
     const data = {
         problem_id: id,
         title: title.value,
@@ -60,7 +61,9 @@ const postSolution = () => {
         })
     }
     console.log(data)
-    createSolutionAPI(data)
+    await createSolutionAPI(data)
+    ElMessage.success('发布成功')
+    router.push(`/problem/${id}/description`)
 }
 
 const createFilter = (queryString) => {

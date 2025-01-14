@@ -16,6 +16,9 @@ import CreateSolution from '@/views/Solution/createSolution.vue'
 import SolutionDetail from '@/views/Solution/solutionDetail.vue'
 import ProblemlistDetail from '@/views/ProblemList/problemlistDetail.vue'
 import CreateDiscussion from '@/views/Discussion/createDiscussion.vue'
+import CreateProblem from '@/views/ProblemSet/createProblem.vue'
+
+
 
 
 const router = createRouter({
@@ -59,10 +62,6 @@ const router = createRouter({
       name: 'problem',
       component: Problem,
       children: [
-        // {
-        //   path: '/problem/:id/',
-        //   component: Description
-        // },
         {
           path: '/problem/:id/description',
           name: 'description',
@@ -89,6 +88,33 @@ const router = createRouter({
       path: '/user/:id',
       name: 'user',
       component: User,
+      // children:[
+      //   {
+      //     path: '/user/:id/index',
+      //     name:'userIndex',
+      //     component: userIndex,
+      //   },
+      //   {
+      //     path: '/user/:id/myPost',
+      //     name:'userIndex',
+      //     component: userIndex,
+      //   },
+      //   {
+      //     path: '/user/:id/myStar',
+      //     name:'myStar',
+      //     component: myStar,
+      //   },
+      //   {
+      //     path: '/user/:id/myProblemList',
+      //     name:'myProblemList',
+      //     component: myProblemList,
+      //   },
+      //   {
+      //     path: '/user/:id/set',
+      //     name:'set',
+      //     component: set,
+      //   },
+      // ]
     },
     {
       path: '/solution/create',
@@ -96,7 +122,7 @@ const router = createRouter({
       component: CreateSolution
     },
     {
-      path: '/problem/:pid/solution/:sid',
+      path: '/problem/:pid/solutions/:sid',
       name: 'solutionDetail',
       component: SolutionDetail
     },
@@ -111,6 +137,11 @@ const router = createRouter({
       component: CreateDiscussion
     },
     {
+      path: '/problem/create',
+      name: 'createProblem',
+      component: CreateProblem
+    },
+    {
       path: '/:patchMatch(.*)*',
       name: 'notFound',
       component: NotFound
@@ -119,7 +150,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to, from, next)
+  // console.log(to, from, next)
   if (to.name === 'login' && from.name) {
     console.log(222)
     localStorage.setItem('redirectPath', from.fullPath);

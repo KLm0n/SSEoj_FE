@@ -179,8 +179,8 @@ Mock.mock(/\/api\/problem\/(\d+)\/submissions\//, 'get', (options) => {
   console.log(options.url)
   const data = [
     {
-      "submit_time": "2024-10-09",
-      "code": "cout << 'Hello World' << endl;'",
+      "submit_time": '2024-12-30 09:17:11.098980+00:00',
+      "code": "cout << 'H\n\ne\nl\nl\no W\no\nr\nl\nd' << endl;'",
       "language": "C++",
       "result": 0,
       "error_info": null,
@@ -188,8 +188,8 @@ Mock.mock(/\/api\/problem\/(\d+)\/submissions\//, 'get', (options) => {
       "memory_spent": 20
     },
     {
-      "submit_time": "2023-12-31",
-      "code": "print('Hello World')",
+      "submit_time": '2025-01-03 09:17:11.098980+00:00',
+      "code": "print('Hello World')\n   print('Hello World')",
       "language": "Python3",
       "result": -2,
       "error_info": "error_info",
@@ -204,7 +204,7 @@ Mock.mock(/\/api\/problem\/(\d+)\/submissions\//, 'get', (options) => {
 })
 
 // 模拟提交题目
-Mock.mock(/\/api\/problem\/submit\//, 'post', (options) => {
+Mock.mock(/\/api\/problem\/submit\//, 'post', () => {
   return {
     err: null,
     data: 'success'

@@ -1,32 +1,6 @@
 <template>
   <layoutNav />
   <div class="wrapper">
-    <div class="containerLeft">
-      <div class="information">
-        <div class="authorContainer">
-          <label>作者</label>
-          <img :src="postStore.post.avatar"  class="avatar" />
-          <p class="authorName">{{ postStore.post.name }}</p>
-        </div>
-        <div class="timeContainer">
-          <label>发布时间</label>
-          <p>{{ postStore.post.create_time }}</p>
-        </div>
-        <el-button type="info" plain class="replyBtn" @click="isReplyVisible = true">回复贴主</el-button>
-
-      </div>
-      <!-- 回复贴主 -->
-      <div v-if="isReplyVisible" class="replyContainer">
-        <div class="replyHeader">
-          <label>编辑回复</label>
-          <span class="iconfont icon-qingkong" @click="isReplyVisible = false"></span>
-        </div>
-        <el-input v-model="input"  placeholder="请输入"  type="textarea" :autosize="{ minRows: 2, maxRows: 20 }" resize=none class="replyInput" />
-        <el-button type="info" plain class="btnSubmit" @click="isReplyVisible = false">发布</el-button>
-
-      </div>
-    </div>
-
     <div class="containerRight">
       <div class="postContainer">
         <!-- 标题 -->
@@ -36,6 +10,18 @@
             <span v-if="!postStore.post.is_good" class="iconfont icon-BxLike" @click="handleLike()"></span>
             <span v-else class="iconfont icon-BxsLike" @click="handleLike()"></span>
             <label class="likeCount">{{ postStore.post.like_count }}</label>
+          </div>
+          <div class="commentCount">
+            <span class="iconfont icon-comment" ></span>
+            <span>{{ postStore.post.comment_count }}</span>
+          </div>
+        </div>
+
+        <div class="information">
+          <div class="authorContainer">
+            <img :src="postStore.post.avatar"  class="avatar" />
+            <p class="authorName">{{ postStore.post.name }}</p>
+            <p class="time">{{ getFullDate(postStore.post.create_time) }}</p>
           </div>
         </div>
 
@@ -47,32 +33,35 @@
       </div>
         <!--评论容器-->
       <div class="commentsContainer">
+        <div class="replyPost">
+          <div style="margin-top: 10px;">
+              <ReplyEditor @click:post="postComment"/>
+          </div>
+        </div>
+
         <div class="sortContainer">
-          <label>{{ postStore.post.comment_count }}</label>
           <el-dropdown v-model="selectedItem">
             <span class="el-dropdown-link">
-              {{ selectedItem || '排序' }}
-            <!-- <el-icon class="el-icon--right">
-              <arrow-down />
-            </el-icon> -->
+              {{ selectedItem || '按热度排序' }}
             </span>
             <template #dropdown>
               <el-dropdown-menu >
-                <el-dropdown-item @click="selectItem('按热度排序')">123</el-dropdown-item>
-                <el-dropdown-item @click="selectItem('按时间排序')">456</el-dropdown-item>
+                <el-dropdown-item @click="selectItem('按热度排序')">按热度</el-dropdown-item>
+                <el-dropdown-item @click="selectItem('按时间排序')">按时间</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </div>
-        <div class="commentsList">
+        <!-- <div class="commentsList">
           <CommentItem :commentsData="commentStore.comments" @reply="handleReply" />
-        </div>
+        </div> -->
+        <CommentItem :id="id" class="comment-panel"/>
       </div>
 
-      <div class="pagination">
+      <!-- <div class="pagination">
           <el-pagination layout="prev, pager, next, jumper" v-model:current-page="currentPage" :total="commentStore.count"
               :background="true" :page-size="pageSize" @current-change="handleCurrentChange" />
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -84,7 +73,9 @@ import { useRouter, useRoute } from 'vue-router';
 import { usePostStore } from '@/stores/postStore';
 import { useCommentStore } from '@/stores/commentStore';
 import CommentItem from '@/views/Discussion/CommentItem.vue';
-
+import { transformDate, getDate, getFullDate} from '@/utils/time';
+import ReplyEditor from '@/components/ReplyEditor.vue';
+import { commentPostAPI } from '@/apis/comment';
 
 const route = useRoute()
 const router = useRouter()
@@ -100,6 +91,14 @@ const selectedItem = ref('');
 const currentPage=ref(1);
 const pageSize = ref(30);
 
+const replyData = ref({
+  id: id,
+  content: null,
+  reply_to_id: null,
+  reply_to_username: null,
+  under_comment_id: null
+})
+
 //更新排序显示
 const selectItem = (item) =>{
   selectedItem.value=item;
@@ -112,21 +111,23 @@ const page_params = computed(() => ({
 }));
 
 const input = ref('')
-const isReplyVisible = ref(false); // 控制 replyContainer 的显示和隐藏
 
-
-
-// 添加回复逻辑
-const handleReply = (parentComment, replyContent) => {
-  const username = prompt("请输入要回复的用户名");
-  parentComment.replies.push({
-    username: "User", // 当前用户
-    time: new Date().toLocaleString(),
-    content: replyContent,
-    replyTo: username || parentComment.username,
-    replies: []
-  });
-};
+// 点击发布
+const postComment = async(content) => {
+  const data = {
+      id: replyData.value.id,
+      content: content,
+      reply_to_id: replyData.value.reply_to_id,
+      under_comment_id: replyData.value.under_comment_id
+  }
+  if(data.content !=''){
+    await commentPostAPI(data)
+  }
+  else{
+    ElMessage.error("内容不能为空")
+  }
+  console.log(data)
+}
 
 const handleCurrentChange = (val) => {
   commentStore.getComments(page_params.value);
@@ -141,9 +142,9 @@ const handleLike= () => {
 // 你可以在实际应用中替换为真实的 API 请求
 onMounted(async () => {
   await postStore.getPost(id);  // 等待 API 请求完成
-  await commentStore.getComments(page_params.value); // 等待数据加载
-  count.value = commentStore.count; // 更新总数
-  console.log(commentStore.comments)
+  // await commentStore.getComments(page_params.value); // 等待数据加载
+  // count.value = commentStore.count; // 更新总数
+  // console.log(commentStore.comments)
 })
 
 </script>
@@ -160,14 +161,6 @@ onMounted(async () => {
   margin-bottom: 20px;
 }
 
-.containerLeft{
-  min-width: 240px;
-  /* display: flex; */
-  padding: 0px auto;
-  box-sizing: border-box;
-  /* background: black; */
-  margin-right: 20px;
-}
 
 /* 右边容器 */
 .containerRight {
@@ -175,19 +168,17 @@ onMounted(async () => {
   flex-direction: column;
   padding: 0px auto;
   box-sizing: border-box;
-  width: 99%;
+  width: 85%;
   margin: auto;
 }
 
 .information {
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
-  min-width: 240px;
-  height: 230px;
   border-radius: 10px;
   display: flex;
-  flex-direction: column;
   z-index: 1000;
   flex-shrink: 1;
+  margin-bottom: 5px;
+  align-items: center;
 }
 
 .authorContainer {
@@ -227,37 +218,11 @@ onMounted(async () => {
   font-weight: bold;
 }
 
-.timeContainer {
-  display: flex;
-  padding: 5px;
-  margin-bottom: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-
-.timeContainer label{
-  display: flex;
-  font-size: 15px;
-  font-weight: bold;
-  margin: auto;
-  margin-left: 0px;
-}
-
-.timeContainer p{
+.time{
   min-width: 60px;
-  text-align: center;
-  color:grey;
-  font-weight: bold;
-}
-
-.replyBtn{
-  display: flex;
-  margin-top:30px;
-  margin-right: 20px;
-  width:40%;
-  align-self: flex-end;
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
+  text-align: left;
+  color:rgb(176, 175, 175);
+  margin-left: 15px;
 }
 
 /* 帖子容器 */
@@ -291,6 +256,7 @@ onMounted(async () => {
 .likeContainer {
   align-items: center;
   cursor: pointer;
+  margin-right: 10px;
 }
 
 .icon-BxLike{
@@ -302,6 +268,21 @@ onMounted(async () => {
 }
 
 .likeCount {
+  color:grey;
+}
+
+.commentCount {
+  align-items: center;
+}
+
+.icon-comment{
+  color:grey;
+}
+
+.commentCount span{
+  font-size: 20px;
+  font-weight: bold;
+  width: 90%;
   color:grey;
 }
 
@@ -350,64 +331,31 @@ onMounted(async () => {
 
 .el-dropdown-link{
   font-weight: bold;
+  font-size: x-large;
   cursor: pointer;
   color: black;
   display: flex;
   align-items: center;
   outline: none;
+  align-self: flex-end;
+  margin-bottom: 10px;
 }
 
 .pagination {
     align-self: flex-end;
 }
 
-.replyContainer{
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
-  min-width: 240px;
-  /* height: 500px; */
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
-  flex-shrink: 1;
-  margin-top: 40px;
-}
 
-.replyHeader{
-  margin-top: 10px;
-  margin-bottom: 10px;
-  display: flex;
-
-}
-.replyHeader label{
-  font-weight: bold;
-  margin-left: 7px;
-}
-
-.replyInput{
-  width:95%;
-  margin: auto;
-  margin-top:0px;
-  margin-bottom: 10px;
-}
-
-
-
-.btnSubmit{
-  width:25%;
-  align-self: flex-end;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  width:25%;
-  align-self: flex-end;
-  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.4);
-}
 
 .icon-qingkong{
   font-size: 30px;
   margin-left: 135px;
   margin-top: -10px;
   cursor: pointer;
+}
+
+.replyPost{
+  margin-bottom: 30px;
 }
 
 </style>

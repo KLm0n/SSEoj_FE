@@ -7,7 +7,7 @@
     <div class="post_content">
       <p class="title">{{ title }}</p>
       <div class="like-container">
-        <span class="time">{{ time }}</span>
+        <span class="time">{{ getDate(time) }}</span>
 
         <span class="iconfont icon-BxLike" ></span>
         <span class="like-count">{{ likeCount }}</span>
@@ -20,7 +20,7 @@
 
 <script setup>
 import { ref } from 'vue';
-
+import { transformDate, getDate} from '@/utils/time';
 
 
 defineProps({

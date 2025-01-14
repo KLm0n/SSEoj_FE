@@ -8,22 +8,22 @@ import 'mathlive/fonts.css'
 let mathliveEditor
 
 const TOOLBAR_CONFIG = [
-  ['undo', 'redo', 'clean', 'format-painter'],
+  // ['undo', 'redo', 'clean', 'format-painter'],
   [
     { header: [1, 2, 3, 4, 5, 6, false] },
-    { font: ['songti', 'yahei', 'kaiti', 'heiti', 'lishu', 'mono', 'arial', 'arialblack', 'comic', 'impact', 'times'] },
+    // { font: ['songti', 'yahei', 'kaiti', 'heiti', 'lishu', 'mono', 'arial', 'arialblack', 'comic', 'impact', 'times'] },
     { size: ['12px', '14px', '16px', '18px', '20px', '24px', '32px', '36px', '48px', '72px'] },
     { lineheight: ['1', '1.2', '1.5', '1.75', '2', '3', '4', '5'] },
   ],
-  ['bold', 'italic', 'strike', 'underline', 'divider'],
+  ['bold', 'italic', 'strike', 'underline'],
   [{ color: [] }, { background: [] }],
   [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-  [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+  [{ list: 'ordered' }, { list: 'bullet' }],
   [{ script: 'sub' }, { script: 'super' }],
   [{ indent: '-1' }, { indent: '+1' }],
   ['link', 'blockquote', 'code', 'code-block'],
   ['image', 'file', 'better-table'],
-  ['formula', 'screenshot', 'fullscreen'],
+  ['formula'],
 ]
 
 // 这里需要换成你自己的图片上传服务地址
@@ -65,6 +65,10 @@ const props = defineProps({
   initialValue: {
     type: String,
     default: ''
+  },
+  initId: {
+    type: String,
+    default: 'mathliveEditor'
   }
 })
 
@@ -73,7 +77,7 @@ onMounted(() => {
   import('@opentiny/fluent-editor').then((module) => {
     const FluentEditor = module.default
 
-    mathliveEditor = new FluentEditor('#mathliveEditor', {
+    mathliveEditor = new FluentEditor(`#${props.initId}`, {
       theme: 'snow',
       modules: {
         toolbar: {
@@ -124,5 +128,5 @@ defineExpose({
 </script>
 
 <template>
-  <div id="mathliveEditor" />
+  <div :id="initId" />
 </template>

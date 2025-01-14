@@ -207,6 +207,10 @@ body{
     justify-content: space-between;
 }
 
+.forgot-password{
+    margin: auto;
+}
+
 .remember_forgot label input{
     accent-color: #162938;
     margin-right: 3px;
@@ -267,4 +271,22 @@ body{
 
 .login_register p label:hover {
     text-decoration: underline;
+}
+
+.emailVerification .el-input{
+    width:70%;
+}
+
+.btnSend{
+    margin-left: 30px;
+    width: 80px;
+}
+  
+.forgetContainer .el-form-item{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.dialog-footer .el-button{
+    width:100px;
 }

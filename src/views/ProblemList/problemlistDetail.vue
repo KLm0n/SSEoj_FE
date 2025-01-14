@@ -31,6 +31,7 @@
                @show="showUserInfoCard(problemListDetail.creator_info.id)"
                popper-style="background:transparent; border:none; box-shadow:none; margin-top:20px;"
                :show-arrow="false"
+               show-after="500"
             >
                <template #reference>
                   <div class="creator-info" @click="jumpToUser(problemListDetail.creator_info.id)">

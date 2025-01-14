@@ -67,9 +67,9 @@ export const useUserStore = defineStore('user', () => {
     }
 
     const getPractice = async (id) => {
-      const data = await getPracticeAPI(id)
-      practiceInfo.value = data.value
-      console.log("get practice info", practiceInfo.value)
+      const res = await getPracticeAPI(id)
+      practiceInfo.value = res.data.practices
+      // console.log("get practice info", practiceInfo.value)
     }
 
 

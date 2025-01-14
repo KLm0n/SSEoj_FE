@@ -15,7 +15,7 @@ const httpInstance = axios.create({
 httpInstance.interceptors.request.use(config => {
     const token = Cookies.get('csrftoken')
     config.headers['X-CSRFToken'] = token
-    console.log(config)
+    console.log("request url:", config.url)
     return config
 }, e => Promise.reject(e))
 

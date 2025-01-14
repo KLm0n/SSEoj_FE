@@ -6,8 +6,6 @@
             <span class="iconfont icon-sousuo" @click="search"></span>
         </div>
         <el-popover 
-            @show="showUserInfoCard(item.user_info.id)"
-            @hide="userInfo = {}"
             popper-style="width: 400px; height: 300px; border-radius:10px;"
             :show-arrow="false"
             trigger="click"
@@ -38,7 +36,7 @@
                     <div class="solution-item">
                         <div class="title">
                             <span class="solution-title" @click="jumpToSolutionDetail(item.id)">{{ item.title }}</span>
-                            <span class="solution-time">{{ item.create_time }}</span>
+                            <span class="solution-time">{{ transformDate(item.create_time) }}</span>
                             <span class="iconfont icon-jiantouarrow487" @click="jumpToSolutionDetail(item.id)"></span>
                         </div>
 
@@ -47,10 +45,11 @@
                             @hide="userInfo = {}"
                             popper-style="background:transparent; border:none; box-shadow:none; margin-top:10px"
                             :show-arrow="false"
+                            show-after="500"
                         >
                             <template #reference>
                                 <div class="userInfo" @click="jumpToUser(item.user_info.id)">
-                                    <el-avatar :size="25" style="font-size: 12px;" :src="item.avatar">KL</el-avatar>
+                                    <el-avatar :size="25" style="font-size: 12px;" :src="getAvatar(item.user_info.avatar)">KL</el-avatar>
                                     <span>{{ item.user_info.username }}</span>
                                 </div>
                             </template>
@@ -71,7 +70,7 @@
                                 @click="toggleLike(item)"></span>
                             <span>{{ transNum(item.like_count) }}</span>
                             <span class="iconfont icon-comment"></span>
-                            <span>{{ item.comment_count }}</span>
+                            <span>{{ transNum(item.comment_count) }}</span>
                         </div>
                     </div>
                     <el-divider />
@@ -94,6 +93,8 @@ import { useTagsStore } from '@/stores/tagsStore';
 import { transNum } from '@/utils/data_calculate';
 import { likeSolutionAPI } from '@/apis/problem';
 import { subscribeUserAPI, getUserInfoAPI } from '@/apis/user';
+import { transformDate } from '@/utils/time';
+import { getAvatar } from '@/utils/basic';
 
 const userInfo = ref({})
 const showUserInfoCard = async(id) => {
@@ -187,16 +188,18 @@ const postSolution = () => {
 
 // 进入题解详细信息页面
 const jumpToSolutionDetail = (sid) => {
-    const url = `/problem/${id}/solution/${sid}`
+    const url = `/problem/${id}/solutions/${sid}`
     window.open(url, '_blank')
 }
 
+// 点击关注用户
 const toggleFollow = (msg) => {
     userInfo.value.is_subscribe = msg
     userInfo.value.subscribers_count += msg? 1: -1
     subscribeUserAPI(userInfo.value.id, msg)
 }
 
+// 添加和减少筛选tag
 const addTag = async(tagId) => {
     selectedTag.value.push(tagId)
     await getSolutionList(id, reqData.value)
@@ -411,6 +414,7 @@ onMounted(async () => {
 .icon-comment {
     font-size: 20px;
     margin-right: 6px;
+    cursor: pointer;
 }
 
 .icon-BxLike+span,

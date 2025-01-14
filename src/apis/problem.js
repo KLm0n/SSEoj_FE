@@ -37,6 +37,7 @@ export const getSubmissionsAPI = (id, params) => {
 
 // 提交题目
 export const submitProblemAPI = (data) => {
+    console.log(data)
     return request({
         url: '/api/problem/submit/',
         method: 'POST',

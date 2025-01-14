@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>已选标签</div>
+        <div style="font-weight: 500;font-size: 16px;">已选标签 ({{ selectedTag.length }})</div>
         <el-scrollbar height="100px" always>
             <el-tag v-for="(tagId, index) in selectedTag" :key="index" type="info" :disable-transitions="true"
                 color="#6C6C6D" closable class="selectedTag" @close="deleteTag(tagId)">
